@@ -1,6 +1,22 @@
+import 'package:english_words/english_words.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import'package:flutter/rendering.dart';
 
-void main() => runApp(MyApp());
+import 'ContextRoute.dart';
+import 'Echo.dart';
+import 'ParentWidgetC.dart';
+
+void main() => runApp(ParentWidgetC());
+//void main() => runApp(ContextRoute());
+//void main() => runApp(AppHome());
+
+//runZoned(() {
+//  runApp(MyApp());
+//}, onError: (Object obj, StackTrace stack) {
+//  var details= makeDetails(obj,stack);
+//  reportError(details);
+//});
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
@@ -8,6 +24,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
+      initialRoute: "/",
       theme: ThemeData(
         // This is the theme of your application.
         //
@@ -20,7 +37,12 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
+      //注册路由表
+      routes: {
+        "new_page": (context) => EchoRoute(),
+        "/": (context) => MyHomePage(title: "Fluter Demo Home page",)
+      },
+      home: MyHomePage(title: 'Home Page'),
     );
   }
 }
@@ -39,8 +61,63 @@ class MyHomePage extends StatefulWidget {
 
   final String title;
 
+
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  CupertinoTestRoute createState() => CupertinoTestRoute();
+//  ScaffoldSnackBar createState() => ScaffoldSnackBar();
+//  _MyHomePageState createState() => _MyHomePageState();
+}
+
+/// ios风格widget
+class CupertinoTestRoute extends State<MyHomePage> {
+  @override
+  Widget build(BuildContext context) {
+    return CupertinoPageScaffold(
+      navigationBar: CupertinoNavigationBar(
+        middle: Text("Cupertino Demo"),
+      ),
+      child: Center(
+        child: CupertinoButton(
+            color: CupertinoColors.activeBlue,
+            child: Text("Press"),
+            onPressed: () {
+              ScaffoldState _state = Scaffold.of(context);
+              _state.showSnackBar(
+                SnackBar(content: Text("ios风格widget")),
+              );
+            }
+        ),
+      ),
+    );
+  }
+}
+
+class ScaffoldSnackBar extends State<MyHomePage> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("子树中获取State对象"),
+      ),
+      body: Center(
+        child: Builder(builder: (context) {
+          return RaisedButton(
+            onPressed: () {
+//              ScaffoldState _state = context.ancestorStateOfType(
+//                TypeMatcher<ScaffoldState>()
+//              );
+              ScaffoldState _state = Scaffold.of(context);
+              _state.showSnackBar(
+                SnackBar(content: Text("我是SnackBar")),
+              );
+            },
+            child: Text("显示SnackBar"),
+          );
+        }),
+      ),
+    );
+  }
+
 }
 
 class _MyHomePageState extends State<MyHomePage> {
@@ -92,12 +169,44 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Text(
-              'You have pushed the button this many times:',
+              'You have pushed the button this many times times:',
             ),
             Text(
               '$_counter',
-              style: Theme.of(context).textTheme.display1,
+              style: Theme
+                  .of(context)
+                  .textTheme
+                  .display2,
             ),
+            FlatButton(
+              child: Text("open new route"),
+              textColor: Colors.blue,
+              onPressed: () {
+//                Navigator.push(context, MaterialPageRoute(builder: (context){
+//                  return NewRoute();
+//                }));
+                Navigator.pushNamed(context, "new_page", arguments: "hi,");
+              },
+            ),
+            FlatButton(
+              child: Text("打开带参数页面"),
+              textColor: Colors.brown,
+              onPressed: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) {
+                  return RouterTestRoute();
+                }));
+              },
+            ),
+            FlatButton(
+              child: Text("debugDumpRenderTree"),
+              textColor: Colors.amber,
+              onPressed: () {
+                debugDumpRenderTree();
+              },
+            ),
+            RandomWordsWidget(),
+            Echo(text: "hello flutter"),
+            ContextRoute(),
           ],
         ),
       ),
@@ -106,6 +215,128 @@ class _MyHomePageState extends State<MyHomePage> {
         tooltip: 'Increment',
         child: Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
+
     );
   }
+}
+
+class NewRoute extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("new Route"),
+      ),
+      body: Center(
+        child: Text("this is new route"),
+      ),
+    );
+  }
+
+}
+
+class TipRoute extends StatelessWidget {
+
+  TipRoute({
+    Key key, @required this.text
+  }) :super(key: key);
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("提示"),
+      ),
+      body: Padding(
+        padding: EdgeInsets.all(18),
+        child: Center(
+          child: Column(
+            children: <Widget>[
+              Text(text),
+              RaisedButton(
+                onPressed: () => Navigator.pop(context, "我是返回值"),
+                child: Text("返回"),
+              )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class RouterTestRoute extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: RaisedButton(
+        onPressed: () async {
+          var result = await Navigator.push(context,
+              MaterialPageRoute(
+                  builder: (context) {
+                    return TipRoute(
+                      text: "我是提示xxx",
+                    );
+                  }
+              ));
+          print("路由返回值：$result");
+        },
+        child: Text("打开提示页"),
+      ),
+
+    );
+  }
+
+}
+
+class EchoRoute extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    var args = ModalRoute
+        .of(context)
+        .settings
+        .arguments;
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(" EchoRoute"),
+      ),
+      body: Center(
+        child: Text("$args this is new route"),
+      ),
+    );
+  }
+
+}
+
+//随机生成字符串
+class RandomWordsWidget extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final wordPair = new WordPair.random();
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: new Text(wordPair.toString()),
+    );
+  }
+
+}
+
+class AppHome extends StatelessWidget {
+
+  @override
+  Widget build(BuildContext context) {
+    return new Material(
+        child: new Center(
+          child: new FlatButton(
+            child: Text("Dump app"),
+            textColor: Colors.black54,
+            onPressed: () {
+              debugDumpApp();
+//          debugDumpRenderTree();
+            },
+          ),
+        ));
+  }
+
 }
