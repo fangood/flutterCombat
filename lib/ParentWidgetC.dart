@@ -75,9 +75,21 @@ class _TapboxCState extends State<TapboxC> {
       onTapCancel: _handleTapCancel,
       child: Container(
         child: Center(
-          child: Text(
-            widget.active ? 'Active' : 'InActive',
-            style: TextStyle(fontSize: 32.0, color: Colors.white),
+          child:
+          Text.rich(
+            TextSpan(
+                children: [
+                  TextSpan(text: widget.active ? 'Active' : 'InActive'),
+                  TextSpan(
+                    text: "https://flutterchina.club",
+                    style: TextStyle(
+                        color: Colors.blue,
+                        fontSize: 32.0
+                    ),
+
+                  )
+                ]
+            ),
             textDirection: TextDirection.ltr,
           ),
         ),

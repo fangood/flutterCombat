@@ -5,11 +5,12 @@ import'package:flutter/rendering.dart';
 
 import 'ContextRoute.dart';
 import 'Echo.dart';
-import 'ParentWidgetC.dart';
+import 'TextStyleTest.dart';
 
-void main() => runApp(ParentWidgetC());
+void main() => runApp(TextStyleTest());
+//void main() => runApp(ParentWidgetC());
 //void main() => runApp(ContextRoute());
-//void main() => runApp(AppHome());
+//void main() => runApp(MyApp());
 
 //runZoned(() {
 //  runApp(MyApp());
@@ -79,7 +80,21 @@ class CupertinoTestRoute extends State<MyHomePage> {
       child: Center(
         child: CupertinoButton(
             color: CupertinoColors.activeBlue,
-            child: Text("Press"),
+            child: Text.rich(
+              TextSpan(
+                  children: [
+                    TextSpan(text: "Home: "),
+                    TextSpan(
+                      text: "https://flutterchina.club",
+                      style: TextStyle(
+                          color: Colors.blue
+                      ),
+
+                    )
+                  ]
+              ),
+              textDirection: TextDirection.ltr,
+            ),
             onPressed: () {
               ScaffoldState _state = Scaffold.of(context);
               _state.showSnackBar(
@@ -87,6 +102,7 @@ class CupertinoTestRoute extends State<MyHomePage> {
               );
             }
         ),
+
       ),
     );
   }
