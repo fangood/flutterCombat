@@ -47,6 +47,10 @@ class TextStyleWidget extends StatelessWidget {
 }
 
 class TextStyleWidget2 extends StatelessWidget {
+  var textStyle = const TextStyle(
+    fontFamily: 'Raleway',
+  );
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -60,7 +64,9 @@ class TextStyleWidget2 extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Text("hello world!!!"),
-              Text("I am Jack"),
+              Text("I am Jack",
+                style: textStyle,
+              ),
               Text(
                 "you are a girl",
                 style: TextStyle(
