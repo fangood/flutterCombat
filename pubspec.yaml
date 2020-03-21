@@ -44,6 +44,10 @@ flutter:
     - family: Raleway
       fonts:
         - asset: fonts/wendinghuochaiti.ttf
+    - family: IconFont
+      fonts:
+        - asset: fonts/iconfont.ttf
+
   assets:
     - images/diamond.png
   # To add assets to your application, add an assets section, like this:
